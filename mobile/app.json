@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Habit Tracker",
+    "slug": "habit-tracker",
+    "scheme": "habittracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {"supportsTablet": true},
+    "android": {"package": "com.habittracker.demo", "permissions": ["POST_NOTIFICATIONS"]},
+    "plugins": ["expo-notifications"]
+  }
+}
