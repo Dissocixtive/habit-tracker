@@ -151,3 +151,6 @@ npm start
 - **E5:** структура репозитория, конфигурация Docker, pytest и инструкции.
 
 Для отчёта о разработке можно продемонстрировать рабочую веб-версию в браузере, страницу `/docs`, вывод тестов и мобильный экран Expo.
+
+## Git practical work
+This branch demonstrates fast-forward merge.
