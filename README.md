@@ -155,3 +155,6 @@ npm start
 ## Git practical work
 This branch demonstrates fast-forward merge.
 Git lab 3: init, branch, merge, rebase, conflicts.
+
+## Использование Git-лаборатории
+Запустите Python и импортируйте calculate_streak из src/app.py.
