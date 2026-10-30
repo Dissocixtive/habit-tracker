@@ -154,3 +154,4 @@ npm start
 
 ## Git practical work
 This branch demonstrates fast-forward merge.
+Git lab 3: init, branch, merge, rebase, conflicts.
