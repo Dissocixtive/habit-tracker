@@ -9,3 +9,6 @@ node_modules/
 .expo/
 .DS_Store
 .local_secret
+
+venv/
+*.pyc
