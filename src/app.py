@@ -5,4 +5,6 @@ def calculate_streak(check_ins):
         if not done:
             break
         streak += 1
-    return min(streak, 365)
+    streak = min(streak, 365)
+    print(f"Текущая серия: {streak}")
+    return streak
