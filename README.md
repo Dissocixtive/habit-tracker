@@ -158,3 +158,4 @@ Git lab 3: init, branch, merge, rebase, conflicts.
 
 ## Использование Git-лаборатории
 Запустите Python и импортируйте calculate_streak из src/app.py.
+(мелкая правка README для лабораторной №3)
