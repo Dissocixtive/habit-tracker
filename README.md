@@ -159,3 +159,14 @@ Git lab 3: init, branch, merge, rebase, conflicts.
 ## Использование Git-лаборатории
 Запустите Python и импортируйте calculate_streak из src/app.py.
 (мелкая правка README для лабораторной №3)
+
+## CI/CD
+
+[![Habit Tracker CI/CD](https://github.com/Dissocixtive/habit-tracker/actions/workflows/tests.yml/badge.svg)](https://github.com/Dissocixtive/habit-tracker/actions/workflows/tests.yml)
+
+Автоматические тесты запускаются через GitHub Actions.
+После успешного прохождения тестов сайт публикуется на Cloudflare Pages.
+
+**Опубликованный сайт:** https://habit-tracker-byz.pages.dev
+
+**Запуск тестов:** `python -m pytest tests/ -v`
