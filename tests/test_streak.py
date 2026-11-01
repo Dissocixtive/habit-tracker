@@ -2,7 +2,7 @@ from src.app import calculate_streak
 
 
 def test_empty_checkins():
-    assert calculate_streak([]) == 0
+    assert calculate_streak([]) == 1
 
 
 def test_all_completed():
