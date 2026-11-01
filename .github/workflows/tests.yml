@@ -1,4 +1,4 @@
-name: Habit Tracker Tests
+name: Habit Tracker CI/CD
 
 on:
   push:
@@ -6,8 +6,12 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
+    name: Run tests
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +28,20 @@ jobs:
 
       - name: Run tests
         run: python -m pytest tests/ -v
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy website
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy web --project-name=habit-tracker --branch=main
