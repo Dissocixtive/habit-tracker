@@ -237,6 +237,9 @@ def summary(days: int = Query(14, ge=1, le=365), on: date | None = None,
     return Summary(total_habits=len(habits), completed_today=sum(today in d for d in all_days),
                    total_completions=sum(len(d) for d in all_days), best_streak=best_streak, days=graph)
 
+from .practice5_api import router as practice5_router
+app.include_router(practice5_router)
+
 # Serve web app and API together on one port, no frontend build tool required.
 web_dir = Path(__file__).resolve().parents[2] / 'web'
 if not web_dir.is_dir():
