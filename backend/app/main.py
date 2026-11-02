@@ -1,5 +1,6 @@
 """Habit Tracker REST API and bundled web interface."""
 import hashlib
+from app.streak import calculate_streak
 import os
 import secrets
 import smtplib
@@ -16,6 +17,9 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
+class StreakRequest(BaseModel):
+    check_ins: list[bool]
 
 from .db import Base, engine, get_db
 from .models import Completion, Habit, PasswordReset, User
@@ -88,6 +92,12 @@ def login(body: Login, db: Session = Depends(get_db)):
     if user is None or not verify_password(body.password, user.password_hash):
         raise HTTPException(status_code=401, detail='Неправильный email или пароль')
     return TokenOut(access_token=create_token(user.id), user=UserOut.model_validate(user))
+
+@app.post("/streak")
+def get_streak(data: StreakRequest):
+    return {
+        "streak": calculate_streak(data.check_ins)
+    }
 
 @app.get('/api/auth/me', response_model=UserOut)
 def me(user: User = Depends(get_current_user)):
