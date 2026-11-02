@@ -1,6 +1,5 @@
 """Habit Tracker REST API and bundled web interface."""
 import hashlib
-from app.streak import calculate_streak
 import os
 import secrets
 import smtplib
@@ -14,19 +13,36 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-class StreakRequest(BaseModel):
-    check_ins: list[bool]
+
+from app.streak import calculate_streak
 
 from .db import Base, engine, get_db
 from .models import Completion, Habit, PasswordReset, User
-from .schemas import (HabitCreate, HabitOut, HabitStats, HabitUpdate, Login, ProfileUpdate,
-                      Register, ResetConfirm, ResetRequest, Summary, TokenOut, UserOut)
+from .practice5_api import router as practice5_router
+from .schemas import (
+    HabitCreate,
+    HabitOut,
+    HabitStats,
+    HabitUpdate,
+    Login,
+    ProfileUpdate,
+    Register,
+    ResetConfirm,
+    ResetRequest,
+    Summary,
+    TokenOut,
+    UserOut,
+)
 from .security import create_token, get_current_user, hash_password, verify_password
 from .stats import calendar, streaks
+
+
+class StreakRequest(BaseModel):
+    check_ins: list[bool]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -237,7 +253,6 @@ def summary(days: int = Query(14, ge=1, le=365), on: date | None = None,
     return Summary(total_habits=len(habits), completed_today=sum(today in d for d in all_days),
                    total_completions=sum(len(d) for d in all_days), best_streak=best_streak, days=graph)
 
-from .practice5_api import router as practice5_router
 app.include_router(practice5_router)
 
 # Serve web app and API together on one port, no frontend build tool required.

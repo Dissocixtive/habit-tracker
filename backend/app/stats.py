@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 
+
 def streaks(completed: set[date], today: date) -> tuple[int, int]:
     current = 0
     cursor = today if today in completed else today - timedelta(days=1)
