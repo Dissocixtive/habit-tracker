@@ -13,16 +13,36 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.streak import calculate_streak
+
 from .db import Base, engine, get_db
 from .models import Completion, Habit, PasswordReset, User
-from .schemas import (HabitCreate, HabitOut, HabitStats, HabitUpdate, Login, ProfileUpdate,
-                      Register, ResetConfirm, ResetRequest, Summary, TokenOut, UserOut)
+from .practice5_api import router as practice5_router
+from .schemas import (
+    HabitCreate,
+    HabitOut,
+    HabitStats,
+    HabitUpdate,
+    Login,
+    ProfileUpdate,
+    Register,
+    ResetConfirm,
+    ResetRequest,
+    Summary,
+    TokenOut,
+    UserOut,
+)
 from .security import create_token, get_current_user, hash_password, verify_password
 from .stats import calendar, streaks
+
+
+class StreakRequest(BaseModel):
+    check_ins: list[bool]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -88,6 +108,12 @@ def login(body: Login, db: Session = Depends(get_db)):
     if user is None or not verify_password(body.password, user.password_hash):
         raise HTTPException(status_code=401, detail='Неправильный email или пароль')
     return TokenOut(access_token=create_token(user.id), user=UserOut.model_validate(user))
+
+@app.post("/streak")
+def get_streak(data: StreakRequest):
+    return {
+        "streak": calculate_streak(data.check_ins)
+    }
 
 @app.get('/api/auth/me', response_model=UserOut)
 def me(user: User = Depends(get_current_user)):
@@ -226,6 +252,8 @@ def summary(days: int = Query(14, ge=1, le=365), on: date | None = None,
         graph.append({'date': dt.isoformat(), 'count': sum(dt in dates for dates in all_days)})
     return Summary(total_habits=len(habits), completed_today=sum(today in d for d in all_days),
                    total_completions=sum(len(d) for d in all_days), best_streak=best_streak, days=graph)
+
+app.include_router(practice5_router)
 
 # Serve web app and API together on one port, no frontend build tool required.
 web_dir = Path(__file__).resolve().parents[2] / 'web'

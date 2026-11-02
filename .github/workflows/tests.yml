@@ -3,8 +3,18 @@ name: Habit Tracker CI/CD
 on:
   push:
     branches: [main]
+    paths:
+      - 'backend/**'
+      - 'web/**'
+      - '.github/workflows/**'
+      - 'requirements.txt'
+      - 'compose.yaml'
   pull_request:
     branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -13,6 +23,49 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run tests with coverage
+        run: python -m pytest -v --cov=app --cov-report=term-missing --cov-report=html --cov-fail-under=80
+
+      - name: Upload coverage report
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: backend/htmlcov/
+          if-no-files-found: error
+
+  lint:
+    name: Run Ruff lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
       - name: Checkout repository
@@ -23,15 +76,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pytest
-        run: python -m pip install pytest==8.0.0
+      - name: Install Ruff
+        run: python -m pip install ruff
 
-      - name: Run tests
-        run: python -m pytest tests/ -v
+      - name: Run Ruff
+        run: python -m ruff check .
 
   deploy:
     name: Deploy to Cloudflare Pages
-    needs: test
+    needs: [test, lint]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 

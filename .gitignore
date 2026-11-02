@@ -12,3 +12,6 @@ node_modules/
 
 venv/
 *.pyc
+.coverage
+htmlcov/
+.ruff_cache/

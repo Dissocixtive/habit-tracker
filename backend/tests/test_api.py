@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
@@ -6,6 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.db import Base, get_db
 from app.main import app
+
 
 @pytest.fixture
 def client(tmp_path):

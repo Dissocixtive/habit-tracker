@@ -1,4 +1,4 @@
-from src.app import calculate_streak
+from app.streak import calculate_streak
 
 
 def test_empty_checkins():

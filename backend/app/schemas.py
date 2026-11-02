@@ -1,7 +1,15 @@
+import re
 from datetime import date
 from typing import Annotated
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints, field_validator
-import re
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    StringConstraints,
+    field_validator,
+)
 
 Password = Annotated[str, StringConstraints(min_length=8, max_length=128)]
 
