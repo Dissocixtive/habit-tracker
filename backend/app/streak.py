@@ -6,5 +6,4 @@ def calculate_streak(habit_checkins: list) -> int:
             break
         streak += 1
     streak = min(streak, 365)
-    print(f"Текущая серия: {streak}")
     return streak
